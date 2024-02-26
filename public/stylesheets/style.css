@@ -125,3 +125,61 @@ body {
   border-radius: 5px;
 }
 
+
+/* ADMIN side product table designing */
+
+.view-products-table{
+  width: 100%;
+}
+
+.container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.products-container{
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.products-table{
+  border-collapse: collapse;
+}
+
+
+.product-table-image-thumbnail{
+  height: auto;
+  width: 50px;
+}
+
+.products-table-heading{
+  border-bottom: 2px solid #a8a4a4;
+  text-align: left;
+}
+
+.products-table-heading th{
+  padding: 8px;
+}
+
+.products-table-data td {
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.row{
+  display: flex;
+  justify-content: right;
+  margin-right: 50px;
+  margin-top: 20px;
+}
+
+.add-product-btn{
+  text-decoration: none;
+  color: white;
+  background-color: #43A846;
+  padding: 10px;
+  border-radius: 5px;
+}
+

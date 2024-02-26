@@ -1,0 +1,35 @@
+{{>admin-header}}
+
+<section class="view-products-table">
+
+    <div class="row">
+        <a class="add-product-btn" href="/admin/add-product">Add Products</a>
+    </div>
+
+
+    <div class="container">
+        <div class="products-container">
+            <table class="products-table">
+                <tr class="products-table-heading">
+                    <th>No</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                </tr>
+
+                {{#each products}}
+                <tr class="products-table-data">
+                    <td>{{ inc @index }}</td> 
+                    <td>{{ this.title }}</td>
+                    <td>{{ this.category }}</td>
+                    <td>{{ this.description }}</td>
+                    <td>{{ this.price }}</td>
+                    <td><img class="product-table-image-thumbnail" src="{{ this.image }}" alt=""></td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+</section>

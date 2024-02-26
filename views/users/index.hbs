@@ -1,0 +1,33 @@
+{{!-- Command for using the admin-header --}}
+{{!-- Conditional rendering of navbar for admin and user --}}
+{{!-- 
+
+        {{#if admin}}
+            {{>admin-header}}
+        {{else}}
+            {{>user-header}}
+        {{/if}} 
+--}}
+
+{{>user-header}}
+
+<section class="product-cards">
+    <div class="products-container">
+        <div class="row">
+
+            {{#each products}}
+                <div class="column">
+                    <div class="card">
+                        <img class="product-image" src="{{this.image}}" alt="">
+                        <div class="card-body">
+                            <h5 class="product-title">{{this.title}}</h5>
+                            <p class="product-description">{{this.description}}</p>
+                            <h5 class="product-price">{{this.price}}</h5>
+                            <a href="" class="add-to-cart-btn">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</section>
