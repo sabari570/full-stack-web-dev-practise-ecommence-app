@@ -4,8 +4,25 @@
     <div class="add-product-row">
         <div class="add-product-column">
             <h2 class="add-product-heading">Add Product</h2>
-            <form action="" class="add-product-form" method="post" enctype="multipart/form-data">
+            <form action="/admin/add-product/" class="add-product-form" method="post" enctype="multipart/form-data">
+                <div class="form-design">
+                    <label class="add-product-label" for="name">Name</label>
+                    <input type="text" name="name" class="add-product-form-input">
 
+                    <label class="add-product-label" for="category">Category</label>
+                    <input type="text" name="category" class="add-product-form-input">
+
+                    <label class="add-product-label" for="description">Description</label>
+                    <input type="text" name="desc" class="add-product-form-input">
+
+                    <label class="add-product-label" for="price">Price</label>
+                    <input type="text" name="price" class="add-product-form-input">
+
+                    <label class="add-product-label" for="image">Upload Image</label>
+                    <input type="file" name="image" class="add-product-form-input" accept=".jpg, .png">
+                </div>
+
+                <button type="submit" class="submit-btn">Submit</button>
             </form>
         </div>
     </div>

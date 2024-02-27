@@ -183,3 +183,30 @@ body {
   border-radius: 5px;
 }
 
+
+/* Admin add product designing */
+
+.add-product-row{
+  padding: 10px;
+  margin-left: 20px;
+}
+.form-design{
+  display: flex;
+  flex-direction: column;
+}
+
+.add-product-form-input{
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.submit-btn{
+  text-decoration: none;
+  color: white;
+  background-color: #43A846;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
