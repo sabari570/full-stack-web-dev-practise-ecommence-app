@@ -8,6 +8,7 @@ var fileUpload = require('express-fileupload');
 
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
+var db = require('./config/connection');
 
 var app = express();
 
@@ -24,6 +25,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
+db.connect((err) => {
+  if(err) console.log("Connection error: ", err);
+  else console.log("Database connected....");
+});
 
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
