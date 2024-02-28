@@ -1,0 +1,23 @@
+
+{{>user-header}}
+
+<section class="login-form-section">
+        <h2 class="login-heading">Login</h2>
+        <form action="/login" method="post" class="login-form">
+            <div class="login-fields">
+                <label for="email" class="email-label">Email address</label>
+                <input type="text" name="email" class="email-input-field" placeholder="Enter email" required>
+
+                <label for="password" class="password-label">Password</label>
+                <input type="password" name="password" class="password-input-field" placeholder="Enter password" required>
+            </div>
+            <div class="login-bottom-buttons">
+                <a href="/signup" class="create-new-account-btn">Create new account?</a>
+                <button type="submit" class="login-btn">Login</button>
+            </div>
+        </form>
+
+        {{#if error}}
+            <div class="show-login-error">{{ error }}</div>
+        {{/if}}
+</section>

@@ -10,10 +10,22 @@
         </div>
 
         <div class="right-side">
-            <form action="" class="search-form">
-                <input type="text" class="search-textbox" placeholder="Search...">
-                <button class="search-btn">Search</button>
-            </form>
+            <div class="container">
+                <div class="account-dropdown">
+                    {{#if user}}
+                        <button class="account-dropdown-btn">{{ user.username }}</button>
+                    {{else}}
+                        <button class="account-dropdown-btn">Account</button>
+                    {{/if}}
+                    <div class="account-dropdown-options">
+                        {{#if user}}
+                            <a href="/logout" class="dropdown-item">Logout</a>
+                        {{else}}
+                            <a href="/login" class="dropdown-item">Login</a>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

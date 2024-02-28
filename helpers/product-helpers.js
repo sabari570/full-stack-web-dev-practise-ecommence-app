@@ -12,4 +12,12 @@ module.exports = {
             callback();
         });
     },
+
+    // Using promise in this function
+    getAllProducts: () => {
+        return new Promise(async (resolve, reject) => {
+            let products = await db.get().collection(constants.COLLECTION_NAME).find().toArray();
+            resolve(products);
+        });
+    },
 };

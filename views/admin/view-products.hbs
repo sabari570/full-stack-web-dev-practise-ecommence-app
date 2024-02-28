@@ -22,11 +22,11 @@
                 {{#each products}}
                 <tr class="products-table-data">
                     <td>{{ inc @index }}</td> 
-                    <td>{{ this.title }}</td>
+                    <td>{{ this.name }}</td>
                     <td>{{ this.category }}</td>
-                    <td>{{ this.description }}</td>
+                    <td>{{ this.desc }}</td>
                     <td>{{ this.price }}</td>
-                    <td><img class="product-table-image-thumbnail" src="{{ this.image }}" alt=""></td>
+                    <td><img class="product-table-image-thumbnail" src="/product-images/{{this._id}}.jpeg" alt=""></td>
                 </tr>
                 {{/each}}
             </table>

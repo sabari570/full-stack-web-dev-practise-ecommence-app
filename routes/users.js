@@ -1,40 +1,61 @@
 var express = require('express');
 var router = express.Router();
+var productHelpers = require('../helpers/product-helpers');
+var userHelpers = require('../helpers/user-helpers');
+const { route } = require('./users');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const products = [
-    {
-      title: "Smartphone",
-      category: "Electronics",
-      description: "A powerful smartphone with advanced features.",
-      price: "$32.00",
-      image: "https://961souq.com/cdn/shop/files/Apple-iPhone-15-Pro-5_fd0d9d18-4418-405b-a2f4-51714ebc27ec.jpg?v=1695476110"
-    },
-    {
-      title: "Laptop",
-      category: "Electronics",
-      description: "A sleek and fast laptop for productivity on the go.",
-      price: "$72.00",
-      image: "https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?cs=srgb&dl=pexels-craig-dennis-205421.jpg&fm=jpg"
-    },
-    {
-      title: "Running Shoes",
-      category: "Sportswear",
-      description: "Comfortable running shoes designed for performance.",
-      price: "$12.00",
-      image: "https://contents.mediadecathlon.com/p2153158/e29523738281c7fded2ac3ac130eb55f/p2153158.jpg?format=auto&quality=70&f=650x0"
-    },
-    {
-      title: "Coffee Maker",
-      category: "Kitchen Appliances",
-      description: "An efficient coffee maker for brewing delicious coffee.",
-      price: "$22.00",
-      image: "https://images.philips.com/is/image/philipsconsumer/72dbb6e1509a4cacb631ad1900d54b9e?wid=420&hei=360&$jpglarge$"
+  let user = req.session.user;
+  productHelpers.getAllProducts()
+  .then((products) => {
+    console.log("User from session: ", user);
+  res.render('./users/index', {title: "Shopping Cart", products, user});
+  });
+});
+
+router.get('/login', (req, res) => {
+  res.render('users/login');
+});
+
+router.get('/signup', (req, res)=>{
+  res.render('users/signup');
+});
+
+router.post('/signup', (req, res) => {
+  userHelpers.doSignUp(req.body)
+  .then((response) => {
+    console.log("User inserted successfull: ", response);
+    req.session.loggedIn = true;
+    req.session.user = response;
+    res.redirect('/');
+  })
+  .catch((err) => {
+    console.log(err);
+    res.render('error', {message: err})
+  });
+});
+
+router.post('/login', (req, res)=>{
+  userHelpers.doLogin(req.body)
+  .then((response) => {
+    if(response.status){
+      req.session.loggedIn = true;
+      req.session.user = response.user;
+      res.redirect('/');
+    }else{
+      res.render('users/login', {error: "Invalid credentials"});
     }
-  ];
-  
-  res.render('./users/index', {title: "Shopping Cart", products});
+  })
+  .catch((err) => {
+    console.log("Login error...", err);
+    res.render('users/login', {error: "Invalid credentials"});
+  });
+});
+
+router.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login');
 });
 
 module.exports = router;
