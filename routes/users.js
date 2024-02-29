@@ -3,6 +3,7 @@ var router = express.Router();
 var productHelpers = require('../helpers/product-helpers');
 var userHelpers = require('../helpers/user-helpers');
 const { route } = require('./users');
+const loginMiddleware = require('../middlewares/loginMiddleware');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -15,7 +16,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', (req, res) => {
-  res.render('users/login');
+  if(req.session.loggedIn){
+    res.redirect('/');
+  }else{
+    res.render('users/login', {error: req.session.loginError});
+    req.session.loginError = null;
+  }
 });
 
 router.get('/signup', (req, res)=>{
@@ -44,7 +50,8 @@ router.post('/login', (req, res)=>{
       req.session.user = response.user;
       res.redirect('/');
     }else{
-      res.render('users/login', {error: "Invalid credentials"});
+      req.session.loginError = "Invalid credentials";
+      res.redirect('/login');
     }
   })
   .catch((err) => {
@@ -56,6 +63,10 @@ router.post('/login', (req, res)=>{
 router.get('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/login');
+});
+
+router.get('/cart', loginMiddleware, (req, res) => {
+  res.render('users/cart');
 });
 
 module.exports = router;

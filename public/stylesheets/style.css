@@ -233,17 +233,15 @@ body {
 .account-dropdown-options{
   display: none;
   position: absolute;
-}
-
-.account-dropdown:hover .account-dropdown-options{
-  display: block;
+  top: 48px;
 }
 
 .dropdown-item{
   text-decoration: none;
   color: black;
-  padding: 10px 18px;
-  background-color: transparent;
+  padding: 10px 15px;
+  border-radius: 5px;
+  background-color: white;
 }
 
 
@@ -313,4 +311,21 @@ body {
   justify-content: center;
   margin-top: 20px;
   color: red;
+}
+
+/* Admin side view products delete and edit button designs */
+.delete-btn{
+  text-decoration: none;
+  color: white;
+  background-color: red;
+  border-radius: 5px;
+  padding: 6px 12px;
+}
+
+.edit-btn{
+  text-decoration: none;
+  color: white;
+  background-color: #4285F4;
+  border-radius: 5px;
+  padding: 6px 12px;
 }

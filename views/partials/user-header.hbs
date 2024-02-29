@@ -4,8 +4,10 @@
             <div class="nav-item-logo"><a href="">Shopping Cart (USER)</a></div>
             <ul class="nav-items">
                 <li class="ul-item"><a href="">Products</a></li>
-                <li class="ul-item"><a href="">Cart</a></li>
-                <li class="ul-item"><a href="">Orders</a></li>
+                <li class="ul-item"><a href="/cart">Cart</a></li>
+                {{#if user}}
+                    <li class="ul-item"><a href="">Orders</a></li>
+                {{/if}}
             </ul>
         </div>
 

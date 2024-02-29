@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
 app.use(session({
-  secret: constants.COOKIE_SECRET_KEY, cookie: { maxAge: 600000 },
+  secret: constants.COOKIE_SECRET_KEY, cookie: { maxAge: 3600000 },
   resave: false,
   saveUninitialized: false,
 }));

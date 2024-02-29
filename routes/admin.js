@@ -47,4 +47,17 @@ router.post('/add-product', (req, res) => {
   });
 });
 
+// Using URL params for deleting the product with product id
+router.get('/delete-product/:id', (req, res) => {
+  let prodId = req.params.id;
+  productHelpers.deleteProduct(prodId)
+  .then((response) => {
+    res.redirect('/admin');
+  })
+  .catch((err) => {
+    console.log("Admin product deletion error: ", err);
+    res.render('error', {message: "Product not found"});
+  });
+});
+
 module.exports = router;
