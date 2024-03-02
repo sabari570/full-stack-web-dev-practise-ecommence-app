@@ -22,11 +22,11 @@
 
                     <div class="edit-product-image-container">
                         <label for="">Image</label>
-                        <img src="/product-images/{{product._id}}.jpeg" class="edit-product-image" alt="">
+                        <img src="/product-images/{{product._id}}.jpeg" class="edit-product-image" id="image-view" alt="">
                     </div>
 
                     <label class="add-product-label" for="image">Upload Image</label>
-                    <input type="file" name="image" class="add-product-form-input" accept=".jpeg">
+                    <input type="file" name="image" class="add-product-form-input" accept=".jpeg" onchange="viewImage(event)">
                 </div>
 
                 <button type="submit" class="submit-btn">Submit</button>
