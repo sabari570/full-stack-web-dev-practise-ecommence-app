@@ -1,0 +1,36 @@
+{{>admin-header}}
+
+<section>
+    <div class="add-product-row">
+        <div class="add-product-column">
+            <h2 class="add-product-heading">Edit Product</h2>
+            <form action="/admin/edit-product/" class="add-product-form" method="post" enctype="multipart/form-data">
+                <div class="form-design">
+                    <input type="text" name="prodId" class="edit-product-id-field" value="{{product._id}}">
+                    <label class="add-product-label" for="name">Name</label>
+                    <input type="text" name="name" value="{{product.name}}" class="add-product-form-input" required>
+
+                    <label class="add-product-label" for="category">Category</label>
+                    <input type="text" name="category" value="{{product.category}}" class="add-product-form-input"
+                        required>
+
+                    <label class="add-product-label" for="description">Description</label>
+                    <input type="text" name="desc" value="{{product.desc}}" class="add-product-form-input" required>
+
+                    <label class="add-product-label" for="price">Price</label>
+                    <input type="text" name="price" value="{{product.price}}" class="add-product-form-input" required>
+
+                    <div class="edit-product-image-container">
+                        <label for="">Image</label>
+                        <img src="/product-images/{{product._id}}.jpeg" class="edit-product-image" alt="">
+                    </div>
+
+                    <label class="add-product-label" for="image">Upload Image</label>
+                    <input type="file" name="image" class="add-product-form-input" accept=".jpeg">
+                </div>
+
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>

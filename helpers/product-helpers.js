@@ -33,4 +33,36 @@ module.exports = {
             .catch((err) => reject(err));
         });
     },
+
+    getProductDetails: (prodId) => {
+        return new Promise((resolve, reject) => {
+            const prodObjectId = new ObjectId(prodId);
+            db.get().collection(constants.COLLECTION_NAME).findOne({_id: prodObjectId})
+            .then((product) => {
+                resolve(product);
+            })
+            .catch((err) => reject(err));
+        });
+    },
+
+    updateProduct: (productDetails) => {
+        return new Promise((resolve , reject) => {
+            const prodObjectId = new ObjectId(productDetails.prodId);
+
+            // Database update syntax
+            db.get().collection(constants.COLLECTION_NAME).updateOne(
+                {_id: prodObjectId},
+                {
+                    $set: {
+                        name: productDetails.name,
+                        category: productDetails.category,
+                        desc: productDetails.desc,
+                        price: productDetails.price
+                    },
+                }
+            )
+            .then((response) => resolve(response))
+            .catch((err) => reject(err));
+        });
+    },
 };
