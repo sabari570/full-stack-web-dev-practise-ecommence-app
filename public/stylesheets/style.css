@@ -11,62 +11,62 @@ body {
 /* Navbar designing */
 
 
-.navbar{
+.navbar {
   display: flex;
   justify-content: space-between;
   padding: 8px 10px;
   background-color: #F8F9FA;
 }
 
-.left-side{
+.left-side {
   display: flex;
   flex: 2;
   margin-top: 8px;
 }
 
-.right-side{
+.right-side {
   flex: 1;
 }
 
-.right-side .container{
+.right-side .container {
   align-items: flex-end;
   justify-content: flex-end;
   margin-right: 10px;
 }
 
-.nav-items{
+.nav-items {
   margin-top: 0px;
   display: flex;
   list-style-type: none;
 }
 
-.nav-item-logo{
+.nav-item-logo {
   font-weight: 500;
   font-size: 16px;
 }
 
-.nav-item-logo a{
+.nav-item-logo a {
   text-decoration: none;
   color: black;
 }
 
-.nav-items a{
+.nav-items a {
   text-decoration: none;
   color: black;
   font-size: 16px;
 }
 
-.ul-item{
+.ul-item {
   padding-right: 10px;
 }
 
-.search-form{
+.search-form {
   display: flex;
   align-items: center;
   justify-content: end;
 }
 
-.search-textbox{
+.search-textbox {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
@@ -74,7 +74,7 @@ body {
   font-size: 15px;
 }
 
-.search-btn{
+.search-btn {
   padding: 10px;
   color: #43A846;
   background-color: white;
@@ -83,7 +83,7 @@ body {
   font-size: 15px;
 }
 
-.search-btn:hover{
+.search-btn:hover {
   cursor: pointer;
   color: white;
   background-color: #43A846;
@@ -92,12 +92,12 @@ body {
 
 
 /* Products card section designing */
-.products-row{
+.products-row {
   display: flex;
   flex-wrap: wrap;
 }
 
-.card{
+.card {
   margin: 20px 20px;
   padding: 15px 15px;
   width: 250px;
@@ -105,66 +105,69 @@ body {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-.product-image{
+.product-image {
   width: 100%;
   height: 50%;
 }
 
-.product-title{
+.product-title {
   font-size: 16px;
   margin-bottom: 5px;
 }
 
-.product-description{
+.product-description {
   margin-top: 0px;
 }
 
-.card-body{
+.card-body {
   margin-bottom: 10px;
 }
 
-.add-to-cart-btn{
+.add-to-cart-btn {
   text-decoration: none;
   color: white;
   background-color: #016BDC;
   padding: 10px;
   border-radius: 5px;
+  box-shadow: none;
+  border: 1px solid #016BDC;
+  cursor: pointer;
 }
 
 
 /* ADMIN side product table designing */
 
-.view-products-table{
+.view-products-table {
   width: 100%;
 }
 
-.container{
+.container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.products-container{
+.products-container {
   margin-top: 20px;
   padding: 10px;
 }
 
-.products-table{
+.products-table {
   border-collapse: collapse;
 }
 
 
-.product-table-image-thumbnail{
+.product-table-image-thumbnail {
   height: auto;
   width: 50px;
 }
 
-.products-table-heading{
+.products-table-heading {
   border-bottom: 2px solid #a8a4a4;
   text-align: left;
 }
 
-.products-table-heading th{
+.products-table-heading th {
   padding: 8px;
 }
 
@@ -174,14 +177,14 @@ body {
   text-align: left;
 }
 
-.row{
+.row {
   display: flex;
   justify-content: right;
   margin-right: 50px;
   margin-top: 20px;
 }
 
-.add-product-btn{
+.add-product-btn {
   text-decoration: none;
   color: white;
   background-color: #43A846;
@@ -192,23 +195,24 @@ body {
 
 /* Admin add product designing */
 
-.add-product-row{
+.add-product-row {
   padding: 10px;
   margin-left: 20px;
 }
-.form-design{
+
+.form-design {
   display: flex;
   flex-direction: column;
 }
 
-.add-product-form-input{
+.add-product-form-input {
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
 
-.submit-btn{
+.submit-btn {
   text-decoration: none;
   color: white;
   background-color: #43A846;
@@ -217,12 +221,12 @@ body {
 }
 
 /* Account dropdown desgin */
-.account-dropdown{
+.account-dropdown {
   display: inline-block;
   position: relative;
 }
 
-.account-dropdown-btn{
+.account-dropdown-btn {
   padding: 10px 16px;
   background-color: #666666;
   color: white;
@@ -230,13 +234,13 @@ body {
   border: 1px solid #525151;
 }
 
-.account-dropdown-options{
+.account-dropdown-options {
   display: none;
   position: absolute;
   top: 48px;
 }
 
-.dropdown-item{
+.dropdown-item {
   text-decoration: none;
   color: black;
   padding: 10px 15px;
@@ -246,13 +250,13 @@ body {
 
 
 /* Login form designs */
-.login-form-section{
+.login-form-section {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
 }
 
-.login-heading{
+.login-heading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -260,36 +264,38 @@ body {
   font-weight: 500;
 }
 
-.login-fields{
+.login-fields {
   display: flex;
   flex-direction: column;
 }
 
-.login-form{
+.login-form {
   margin-top: 20px;
   padding-left: 30%;
   padding-right: 30%;
 }
 
-.email-input-field, .password-input-field, .name-input-field{
+.email-input-field,
+.password-input-field,
+.name-input-field {
   padding: 10px 15px;
   border-radius: 8px;
   border: 1px solid #ccc;
   margin-bottom: 18px;
 }
 
-.login-bottom-buttons{
+.login-bottom-buttons {
   display: flex;
   justify-content: space-between;
 }
 
-.create-new-account-btn{
+.create-new-account-btn {
   text-decoration: none;
   color: #4285F4;
   font-weight: 500;
 }
 
-.login-btn{
+.login-btn {
   padding: 8px 15px;
   background-color: #4285F4;
   color: white;
@@ -297,7 +303,7 @@ body {
   border: 1px solid #296cd8;
 }
 
-.signup-btn{
+.signup-btn {
   padding: 8px 8px;
   background-color: #4285F4;
   color: white;
@@ -305,7 +311,7 @@ body {
   border: 1px solid #296cd8;
 }
 
-.show-login-error{
+.show-login-error {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,7 +320,7 @@ body {
 }
 
 /* Admin side view products delete and edit button designs */
-.delete-btn{
+.delete-btn {
   text-decoration: none;
   color: white;
   background-color: red;
@@ -322,7 +328,7 @@ body {
   padding: 6px 12px;
 }
 
-.edit-btn{
+.edit-btn {
   text-decoration: none;
   color: white;
   background-color: #4285F4;
@@ -331,17 +337,81 @@ body {
 }
 
 /* Edit product styling */
-.edit-product-image-container{
+.edit-product-image-container {
   display: flex;
 }
 
-.edit-product-image{
+.edit-product-image {
   width: 100px;
   height: auto;
   padding-left: 10px;
   margin-bottom: 10px;
 }
 
-.edit-product-id-field{
+.edit-product-id-field {
   display: none;
+}
+
+/* Carts screen desinging */
+.carts-container {
+  display: flex;
+  margin: 16px 100px;
+}
+
+.carts-table {
+  flex: 1;
+}
+
+.visibilty-zero-field {
+  visibility: hidden;
+}
+
+.carts-table {
+  border-collapse: collapse;
+}
+
+.carts-table-heading th {
+  border-bottom: 2px solid #a8a4a4;
+  text-align: left;
+}
+
+.carts-table-heading th {
+  padding: 8px;
+}
+
+.carts-table-data td {
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.carts-quantity-ctrl-btn {
+  background-color: #20507e;
+  border: 1px solid #585555;
+  color: white;
+  font-size: 16px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.carts-quantity-value {
+  background-color: white;
+  border: 1px solid white;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.cart-badge {
+  margin: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: green;
+  color: white;
+  text-align: center;
+  display: inline-block;
+  line-height: 22px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px;
 }

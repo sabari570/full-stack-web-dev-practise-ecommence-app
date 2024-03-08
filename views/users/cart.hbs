@@ -1,3 +1,39 @@
+{{>user-header}}
+
 <section class="cart-section">
-    <div class="cart-heading">Cart is empty</div>
+    {{#if products}}
+    <div class="carts-container">
+        <table class="carts-table">
+            <tr class="carts-table-heading">
+                <th>Item</th>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th class="visibilty-zero-field">Empty</th>
+            </tr>
+
+            {{#each products}}
+
+            <tr class="carts-table-data">
+                {{#each this.productDetails}}
+                    <td>
+                        <img class="product-table-image-thumbnail" src="/product-images/{{this._id}}.jpeg" alt="">
+                    </td>
+                    <td>{{this.name}}</td>
+                {{/each}}
+                    <td>
+                        <button class="carts-quantity-ctrl-btn">-</button>
+                        <button class="carts-quantity-value">{{ this.quantity }}</button>
+                        <button class="carts-quantity-ctrl-btn">+</button>
+                    </td>
+                    <td>
+                        <a href="#" class="delete-btn">Remove</a>
+                    </td>
+            </tr>
+
+            {{/each}}
+        </table>
+    </div>
+    {{else}}
+    <h3>No items in cart</h3>
+    {{/if}}
 </section>

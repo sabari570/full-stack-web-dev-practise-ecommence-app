@@ -58,23 +58,48 @@ module.exports = {
         });
     },
     addToCart: (prodId, userId) => {
+        let prodObject = {
+            item: new ObjectId(prodId),
+            quantity: 1,
+        };
         return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(constants.CART_COLLECTION).findOne({ user: new ObjectId(userId) });
             if (userCart) {
-                db.get().collection(constants.CART_COLLECTION).updateOne(
-                    { user: new ObjectId(userId) },
-                    {
-                        $push: {
-                            products: new ObjectId(prodId)
-                        }
-                    }
-                )
-                    .then((response) => resolve(response))
-                    .catch((err) => reject(err));
+                // looping through the product array and finding out if the product already exists
+                // if yes then return the index
+                let productExist = userCart.products.findIndex((product) => product.item == prodId);
+                console.log("Product exits index: ", productExist);
+                if (productExist != -1) {
+                    db.get().collection(constants.CART_COLLECTION)
+                        .updateOne(
+                            {
+                                'products.item': new ObjectId(prodId), // updated the 
+                            },
+                            {
+                                $inc: {
+                                    // use $ sign whenever your trying to update a value inside an array
+                                    // products.$ -> goes into the products array
+                                    // then $.quantity -> goes into the quantity part of that object and then increments it
+                                    'products.$.quantity': 1 // $inc -> increments the value of the specified field (products.quantity) by 1
+                                }
+                            })
+                        .then((response) => resolve(response))
+                        .catch((err) => reject(err));
+                } else {
+                    db.get().collection(constants.CART_COLLECTION)
+                        .updateOne(
+                            { user: new ObjectId(userId) },
+                            {
+                                $push: { products: prodObject }
+                            }
+                        )
+                        .then((response) => resolve(response))
+                        .catch((err) => reject(err));
+                }
             } else {
                 let cartObj = {
                     user: new ObjectId(userId),
-                    products: [new ObjectId(prodId)],
+                    products: [prodObject],
                 };
                 db.get().collection(constants.CART_COLLECTION).insertOne(cartObj)
                     .then((response) => resolve(response))
@@ -93,32 +118,110 @@ module.exports = {
             // And then if match is found it returns the product object
             // The cart items will be stored under the cartItems key
             let cartItems = await db.get().collection(constants.CART_COLLECTION)
-            .aggregate(
-                [
-                    {
-                        $match: {user: new ObjectId(userId)}
-                    },
-                    {
-                        $lookup: {
-                            from: constants.COLLECTION_NAME,
-                            let: {
-                                proList: '$products'
+                .aggregate(
+                    [
+                        // Stage -1: fething the cart items of the particular user
+                        {
+                            $match: { user: new ObjectId(userId) }
+                        },
+                        // This stage of aggregation was when the cart contained only product ids in the products list
+                        // {
+                        //     $lookup: {
+                        //         from: constants.COLLECTION_NAME,
+                        //         // We cant use localfield with lookup in the case of an array
+                        //         // so acces it in this way
+                        //         // place the products array from cart onto a variable named proList
+                        //         let: {
+                        //             proList: '$products'
+                        //         },
+                        //         pipeline: [
+                        //             {
+                        //                 $match: {
+                        //                     $expr: {
+                        //                         // here _id -> is the ids of the products in products collection
+                        //                         // proList -> is the ids of productc in the cart collection
+                        //                         // proList has the list of product ids
+                        //                         // match each product id in products collection with the list of ids in the cart collection proList
+                        //                         // $in is used to run a loop and match each of the product ids in the list
+                        //                         $in: ['$_id', '$$proList']
+                        //                     }
+                        //                 }
+                        //             }
+                        //         ],
+                        //         as: 'cartItems',
+                        //     }
+                        // }
+
+                        // Stage - 2: unwinding the products array
+                        // This stage of aggregation is used when the structure of the products array changed
+                        // Now the products array has an obeject that contains the product id and the product quantity 
+                        {
+                            $unwind: '$products'
+                        },
+
+                        // Stage - 3: Projecting only the item and the quantity from the resulting object
+                        {
+                            $project: {
+                                item: '$products.item',
+                                quantity: '$products.quantity'
+                            }
+                        },
+
+                        // Stage -4: Using lookup to find the product ids from the products table and obtain the product object
+                        {
+                            $lookup: {
+                                from: constants.COLLECTION_NAME,
+                                localField: 'item',
+                                foreignField: '_id',
+                                as: 'productDetails'
                             },
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: {
-                                            $in: ['$_id', '$$proList']
-                                        }
-                                    }
-                                }
-                            ],
-                            as: 'cartItems',
+
+                        }
+                    ]
+                ).toArray();
+            if (cartItems.length === 0) {
+                reject("No items in cart");
+            } else {
+                console.log("Aggregation result: ", cartItems[0].productDetails);
+                resolve(cartItems);
+            }
+        });
+    },
+    getCartProductsCount: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let count = 0;
+            let cartItemsQuantityCount = await db.get().collection(constants.CART_COLLECTION).aggregate([
+                // Stage -1: Unwinding the products list
+                {
+                    $unwind: '$products'
+                },
+
+                // Stage - 2: Grouping each of the product and finding the item quantity of each product
+                {
+                    $group: {
+                        _id: '$products.item',
+                        totalQuantity: {
+                            $sum: "$products.quantity"
                         }
                     }
-                ]
-            ).toArray();
-            resolve(cartItems[0].cartItems);
+                },
+
+                // Stage - 3: Considering the whole documents as 1 by keeping the _id= null
+                // and then summing up the totalQuantity field
+                {
+                    $group: {
+                        _id: null,
+                        totalProductsInCart: {
+                            $sum: "$totalQuantity"
+                        }
+                    }
+                }
+            ]).toArray();
+            console.log("cart items total quantity: ", cartItemsQuantityCount[0].totalProductsInCart);
+            if(cartItemsQuantityCount){
+                count = cartItemsQuantityCount[0].totalProductsInCart;
+            }
+            resolve(count);
         });
     },
 };

@@ -15,11 +15,6 @@
     <div class="products-container">
         <div class="products-row">
 
-            {{#if successMsg}}
-                <script>
-                    alert("Item added to cart successfully");
-                </script>
-            {{/if}}
 
             {{#each products}}
             <div class="column">
@@ -29,7 +24,8 @@
                         <h5 class="product-title">{{this.name}}</h5>
                         <p class="product-description">{{this.desc}}</p>
                         <h5 class="product-price">{{this.price}}</h5>
-                        <a href="/add-to-cart/{{this._id}}" class="add-to-cart-btn">Add to cart</a>
+                        {{!-- <a href="/add-to-cart/{{this._id}}" class="add-to-cart-btn">Add to cart</a> --}}
+                        <button onclick="addToCart('{{this._id}}')" class="add-to-cart-btn">Add to cart</button>
                     </div>
                 </div>
             </div>

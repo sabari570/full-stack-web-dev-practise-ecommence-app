@@ -5,14 +5,16 @@ var userHelpers = require('../helpers/user-helpers');
 const loginMiddleware = require('../middlewares/loginMiddleware');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   let user = req.session.user;
+  let cartCount = null;
+  if (user) {
+    cartCount = await userHelpers.getCartProductsCount(user._id);
+  }
   productHelpers.getAllProducts()
     .then((products) => {
       console.log("User from session: ", user);
-      let successMsg = req.session.successMsg;
-      res.render('./users/index', { title: "Shopping Cart", products, user, successMsg });
-      req.session.successMsg = null;
+      res.render('./users/index', { title: "Shopping Cart", products, user, cartCount });
     });
 });
 
@@ -66,20 +68,33 @@ router.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-router.get('/cart', loginMiddleware,async (req, res) => {
-  let products = await userHelpers.getCartProducts(req.session.user._id);
-  console.log("Cart items: ", products);
-  res.render('users/cart');
+router.get('/cart', loginMiddleware, async (req, res) => {
+  try {
+    let products = await userHelpers.getCartProducts(req.session.user._id);
+    console.log("Cart items: ", products);
+    res.render('users/cart', { products, user: req.session.user });
+  } catch (err) {
+    console.log("Error while fetching data: ", err);
+    res.render('users/cart', { user: req.session.user });
+  }
 });
 
-router.get('/add-to-cart/:id', loginMiddleware, (req, res) => {
-  userHelpers.addToCart(req.params.id, req.session.user._id)
-    .then((response) => {
-      console.log("Product added to cart successfully: ", response);
-      req.session.successMsg = "Item added to cart successfully";
-      res.redirect('/');
-    })
-    .catch((err) => res.render('error', { message: err }));
+router.get('/add-to-cart/:id', (req, res) => {
+  console.log("API call..");
+  if (!req.session.loggedIn) {
+    res.json({ status: false });
+  } else {
+    userHelpers.addToCart(req.params.id, req.session.user._id)
+      .then((response) => {
+        console.log("Product added to cart successfully: ", response);
+        res.json({ status: true });
+        // res.redirect('/');
+      })
+      .catch((err) => {
+        // res.render('error', { message: err });
+        res.json({ status: false, err })
+      });
+  }
 });
 
 module.exports = router;

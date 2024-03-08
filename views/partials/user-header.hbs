@@ -4,9 +4,16 @@
             <div class="nav-item-logo"><a href="">Shopping Cart (USER)</a></div>
             <ul class="nav-items">
                 <li class="ul-item"><a href="">Products</a></li>
-                <li class="ul-item"><a href="/cart">Cart</a></li>
+                <li class="ul-item">
+                    <a href="/cart">
+                        Cart
+                        {{#if cartCount}}
+                            <span class="cart-badge">{{cartCount}}</span>
+                        {{/if}}
+                    </a>
+                </li>
                 {{#if user}}
-                    <li class="ul-item"><a href="">Orders</a></li>
+                <li class="ul-item"><a href="">Orders</a></li>
                 {{/if}}
             </ul>
         </div>
@@ -15,15 +22,15 @@
             <div class="container">
                 <div class="account-dropdown">
                     {{#if user}}
-                        <button class="account-dropdown-btn">{{ user.username }}</button>
+                    <button class="account-dropdown-btn">{{ user.username }}</button>
                     {{else}}
-                        <button class="account-dropdown-btn">Account</button>
+                    <button class="account-dropdown-btn">Account</button>
                     {{/if}}
                     <div class="account-dropdown-options">
                         {{#if user}}
-                            <a href="/logout" class="dropdown-item">Logout</a>
+                        <a href="/logout" class="dropdown-item">Logout</a>
                         {{else}}
-                            <a href="/login" class="dropdown-item">Login</a>
+                        <a href="/login" class="dropdown-item">Login</a>
                         {{/if}}
                     </div>
                 </div>
