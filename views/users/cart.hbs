@@ -14,20 +14,18 @@
             {{#each products}}
 
             <tr class="carts-table-data">
-                {{#each this.productDetails}}
-                    <td>
-                        <img class="product-table-image-thumbnail" src="/product-images/{{this._id}}.jpeg" alt="">
-                    </td>
-                    <td>{{this.name}}</td>
-                {{/each}}
-                    <td>
-                        <button class="carts-quantity-ctrl-btn">-</button>
-                        <button class="carts-quantity-value">{{ this.quantity }}</button>
-                        <button class="carts-quantity-ctrl-btn">+</button>
-                    </td>
-                    <td>
-                        <a href="#" class="delete-btn">Remove</a>
-                    </td>
+                <td>
+                    <img class="product-table-image-thumbnail" src="/product-images/{{this.productDetail._id}}.jpeg" alt="">
+                </td>
+                <td>{{this.productDetail.name}}</td>
+                <td>
+                    <button class="carts-quantity-ctrl-btn" onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', -1)">-</button>
+                    <button class="carts-quantity-value" id="{{ this.productDetail._id }}">{{ this.quantity }}</button>
+                    <button class="carts-quantity-ctrl-btn" onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', 1)">+</button>
+                </td>
+                <td>
+                    <button style="border: 1px solid #585555; cursor: pointer" onclick="removeProductFromCart('{{this._id}}', '{{this.productDetail._id}}')" class="delete-btn">Remove</button>
+                </td>
             </tr>
 
             {{/each}}

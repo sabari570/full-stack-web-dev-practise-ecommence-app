@@ -71,7 +71,6 @@ router.get('/logout', (req, res) => {
 router.get('/cart', loginMiddleware, async (req, res) => {
   try {
     let products = await userHelpers.getCartProducts(req.session.user._id);
-    console.log("Cart items: ", products);
     res.render('users/cart', { products, user: req.session.user });
   } catch (err) {
     console.log("Error while fetching data: ", err);
@@ -95,6 +94,31 @@ router.get('/add-to-cart/:id', (req, res) => {
         res.json({ status: false, err })
       });
   }
+});
+
+router.post('/change-product-quantity', (req, res) => {
+  userHelpers.changeProductQuantity(req.body)
+  .then((response) => {
+    console.log("Response after changing product quantity: ", response);
+    res.json(response);
+  })
+  .catch((err) => {
+    console.log("Error after change product quantity: ", err);
+    res.json({status: false});
+  });
+});
+
+router.delete('/remove-cart-product', (req, res) => {
+  let queryParams = req.query;
+  userHelpers.removeProductFromCart(queryParams.cartId, queryParams.prodId)
+  .then((response) => {
+    console.log("Success response of removing product from cart: ", response);
+    res.json(response);
+  })
+  .catch((err) => {
+    console.log("Error from removing the product from cart: ", err);
+    res.status({status: false});
+  });
 });
 
 module.exports = router;

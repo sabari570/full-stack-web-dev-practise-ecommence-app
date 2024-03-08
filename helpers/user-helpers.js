@@ -73,6 +73,7 @@ module.exports = {
                     db.get().collection(constants.CART_COLLECTION)
                         .updateOne(
                             {
+                                user: new ObjectId(userId),
                                 'products.item': new ObjectId(prodId), // updated the 
                             },
                             {
@@ -176,13 +177,24 @@ module.exports = {
                                 as: 'productDetails'
                             },
 
+                        },
+
+                        // Stage - 5: Converting the list of productDetails into a single object
+                        {
+                            $project: {
+                                item: 1,
+                                quantity: 1,
+                                productDetail: {
+                                    $arrayElemAt: ['$productDetails', 0], //$arrayElemAt is used to return a particular element from an array's index mentioned
+                                }
+                            }
                         }
                     ]
                 ).toArray();
             if (cartItems.length === 0) {
                 reject("No items in cart");
             } else {
-                console.log("Aggregation result: ", cartItems[0].productDetails);
+                console.log("Aggregation result: ", cartItems[0]);
                 resolve(cartItems);
             }
         });
@@ -218,10 +230,80 @@ module.exports = {
                 }
             ]).toArray();
             console.log("cart items total quantity: ", cartItemsQuantityCount[0].totalProductsInCart);
-            if(cartItemsQuantityCount){
+            if (cartItemsQuantityCount) {
                 count = cartItemsQuantityCount[0].totalProductsInCart;
             }
             resolve(count);
+        });
+    },
+
+    changeProductQuantity: ({ cartId, prodId, count, quantity }) => {
+        let integerCount = parseInt(count);
+        let integerQuantity = parseInt(quantity);
+        return new Promise((resolve, reject) => {
+            // this is the case when the product count is 1 and the user clicks on the decrement button
+            // so now the product count becomes zero hence we remove the product from the carts
+            if (integerQuantity == 1 && integerCount == -1) {
+                db.get().collection(constants.CART_COLLECTION)
+                    .updateOne(
+                        {
+                            _id: new ObjectId(cartId)
+                        },
+                        {
+
+                            // Removing a product from the products array
+                            // pull is used to remove and push is used to add
+                            // pull from products array the one with the item as the mentioned product id
+                            $pull: {
+                                products: {
+                                    item: new ObjectId(prodId),
+                                }
+                            }
+                        }
+                    )
+                    .then((response) => {
+                        console.log("Response after update: ", response);
+                        resolve({removeProduct: true});
+                    })
+                    .catch((err) => reject(err));
+            } else {
+                db.get().collection(constants.CART_COLLECTION)
+                    .updateOne(
+                        {
+                            '_id': new ObjectId(cartId),
+                            'products.item': new ObjectId(prodId)
+                        },
+                        {
+                            $inc: {
+                                'products.$.quantity': integerCount
+                            }
+                        }
+                    )
+                    .then((response) => {
+                        console.log("Response after update: ", response);
+                        resolve({status: true});
+                    })
+                    .catch((err) => reject(err));
+            }
+        });
+    },
+    removeProductFromCart: (cartId, prodId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(constants.CART_COLLECTION)
+            .updateOne(
+                {
+                    _id: new ObjectId(cartId),
+                },
+                {
+                    $pull: {
+                        products: {
+                            item: new ObjectId(prodId),
+                        }
+                    }
+                }
+            )
+            .then((response) => resolve({removedProduct: true}))
+            .catch((err) => reject(err));
         });
     },
 };
