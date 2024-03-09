@@ -112,3 +112,8 @@ $("#checkout-form").submit((e) => {
         }
     );
 });
+
+// Script for implementing search in admin products
+$(document).ready( function () {
+    $('#products-table').DataTable();
+} );
