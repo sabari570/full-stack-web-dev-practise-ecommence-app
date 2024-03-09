@@ -229,8 +229,8 @@ module.exports = {
                     }
                 }
             ]).toArray();
-            console.log("cart items total quantity: ", cartItemsQuantityCount[0].totalProductsInCart);
-            if (cartItemsQuantityCount) {
+            if (cartItemsQuantityCount[0]) {
+                console.log("cart items total quantity: ", cartItemsQuantityCount[0].totalProductsInCart);
                 count = cartItemsQuantityCount[0].totalProductsInCart;
             }
             resolve(count);
@@ -263,7 +263,7 @@ module.exports = {
                     )
                     .then((response) => {
                         console.log("Response after update: ", response);
-                        resolve({removeProduct: true});
+                        resolve({ removeProduct: true });
                     })
                     .catch((err) => reject(err));
             } else {
@@ -281,7 +281,7 @@ module.exports = {
                     )
                     .then((response) => {
                         console.log("Response after update: ", response);
-                        resolve({status: true});
+                        resolve({ status: true });
                     })
                     .catch((err) => reject(err));
             }
@@ -290,20 +290,200 @@ module.exports = {
     removeProductFromCart: (cartId, prodId) => {
         return new Promise((resolve, reject) => {
             db.get().collection(constants.CART_COLLECTION)
-            .updateOne(
-                {
-                    _id: new ObjectId(cartId),
-                },
-                {
-                    $pull: {
-                        products: {
-                            item: new ObjectId(prodId),
+                .updateOne(
+                    {
+                        _id: new ObjectId(cartId),
+                    },
+                    {
+                        $pull: {
+                            products: {
+                                item: new ObjectId(prodId),
+                            }
                         }
                     }
-                }
-            )
-            .then((response) => resolve({removedProduct: true}))
-            .catch((err) => reject(err));
+                )
+                .then((response) => resolve({ removedProduct: true }))
+                .catch((err) => reject(err));
+        });
+    },
+    getTotalAmount: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let totalAmount = await db.get().collection(constants.CART_COLLECTION).aggregate(
+                [
+                    //Stage 1: fetcing the particular users cart
+                    {
+                        $match: {
+                            user: new ObjectId(userId)
+                        }
+                    },
+
+                    // Stage 2: unwinding the products array
+                    {
+                        $unwind: '$products'
+                    },
+
+                    // Stage 3: projecting only the product id and the quantity
+                    {
+                        $project: {
+                            item: '$products.item',
+                            quantity: '$products.quantity',
+                        }
+                    },
+
+                    // Stage 4: Perfoming lookup and finding the product details from the product collection
+                    {
+                        $lookup: {
+                            from: constants.COLLECTION_NAME,
+                            localField: 'item',
+                            foreignField: '_id',
+                            as: 'productDetails'
+                        }
+                    },
+
+                    // Stage 5: Projecting out the item id, quantity and instead of array we extract the product object
+                    {
+                        $project: {
+                            item: 1,
+                            quantity: 1,
+                            product: {
+                                $arrayElemAt: ['$productDetails', 0]
+                            }
+                        }
+                    },
+
+                    // Stage 6: Projecting out only the item, quantity and its price
+                    {
+                        $project: {
+                            item: 1,
+                            quantity: 1,
+                            price: '$product.price'
+                        }
+                    },
+
+                    // Stage 7: Grouping the entire document as a single collection by setting _id as null
+                    // and then finding the total amount
+                    {
+                        $group: {
+                            _id: null,
+                            total: {
+                                $sum: {
+                                    $multiply: [
+                                        { $toDouble: '$quantity' },
+                                        { $toDouble: '$price' },  // Converting the string price in databse to double type
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            ).toArray();
+            if (totalAmount.length != 0) {
+                console.log("TotalAmount: ", totalAmount);
+                resolve(totalAmount[0].total);
+            } else {
+                reject();
+            }
+        });
+    },
+    getCartProductsList: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let cart = await db.get().collection(constants.CART_COLLECTION).findOne({ user: new ObjectId(userId) });
+            if (cart) {
+                resolve(cart.products);
+            } else {
+                reject();
+            }
+        });
+    },
+    placeOrder: (order, products, totalAmount) => {
+        return new Promise(async (resolve, reject) => {
+            let status = (order['payment-method'] === 'COD') ? 'placed' : 'pending';
+            let orderObject = {
+                deliveryDetails: {
+                    mobile: order.mobile,
+                    address: order.address,
+                    pincode: order.pincode,
+                },
+                userId: new ObjectId(order.userId),
+                paymentMethod: order['payment-method'],
+                products: products,
+                status: status,
+                totalAmount: totalAmount,
+                date: new Date().toLocaleString(),
+            };
+            db.get().collection(constants.ORDER_COLLECTION).insertOne(orderObject)
+                .then((response) => {
+
+                    // After order being placed remove the cart
+                    db.get().collection(constants.CART_COLLECTION).deleteOne({ user: new ObjectId(order.userId) })
+                    resolve(response.insertedId);
+                })
+                .catch((err) => reject(err));
+        });
+    },
+    getOrderDetails: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let orderDetails = await db.get().collection(constants.ORDER_COLLECTION).find({userId: new ObjectId(userId)}).toArray();
+            if (orderDetails) {
+                console.log("Order details: ", orderDetails);
+                resolve(orderDetails);
+            } else {
+                reject();
+            }
+        });
+    },
+    getOrderedProducts: (orderId) => {
+        return new Promise(async(resolve, reject) => {
+            let orderedProducts = await db.get().collection(constants.ORDER_COLLECTION).aggregate(
+                [
+                    // Stage 1: fetches all the documents of the given orderId
+                    {
+                        $match: {
+                            _id: new ObjectId(orderId)
+                        }
+                    },
+
+                    // Stage 2: Unwinds the products array
+                    {
+                        $unwind: '$products'
+                    },
+
+                    // Stage 3: projects only the required details
+                    {
+                        $project: {
+                            item: '$products.item',
+                            quantity: '$products.quantity'
+                        }
+                    },
+
+                    // Stage 4: performing a lookup and then extarcting the product details
+                    {
+                        $lookup: {
+                            from: constants.COLLECTION_NAME,
+                            localField: 'item',
+                            foreignField: '_id',
+                            as: 'productDetails'
+                        }
+                    },
+
+                    // Stage 5: projecting only the necessary details and converting the array to object
+                    {
+                        $project: {
+                            item: 1,
+                            quantity: 1,
+                            productDetail: {
+                                $arrayElemAt: ['$productDetails', 0]
+                            }
+                        }
+                    }
+                ]
+            ).toArray();
+            if(orderedProducts){
+                console.log("Ordered products: ", orderedProducts);
+                resolve(orderedProducts);
+            }else{
+                reject();
+            }
         });
     },
 };

@@ -71,7 +71,8 @@ router.get('/logout', (req, res) => {
 router.get('/cart', loginMiddleware, async (req, res) => {
   try {
     let products = await userHelpers.getCartProducts(req.session.user._id);
-    res.render('users/cart', { products, user: req.session.user });
+    let totalAmount = await userHelpers.getTotalAmount(req.session.user._id);
+    res.render('users/cart', { products, user: req.session.user, totalAmount });
   } catch (err) {
     console.log("Error while fetching data: ", err);
     res.render('users/cart', { user: req.session.user });
@@ -98,27 +99,86 @@ router.get('/add-to-cart/:id', (req, res) => {
 
 router.post('/change-product-quantity', (req, res) => {
   userHelpers.changeProductQuantity(req.body)
-  .then((response) => {
-    console.log("Response after changing product quantity: ", response);
-    res.json(response);
-  })
-  .catch((err) => {
-    console.log("Error after change product quantity: ", err);
-    res.json({status: false});
-  });
+    .then(async (response) => {
+      let totalAmount = await userHelpers.getTotalAmount(req.session.user._id);
+      response.total = totalAmount;
+      res.json(response);
+    })
+    .catch((err) => {
+      console.log("Error after change product quantity: ", err);
+      res.json({ status: false });
+    });
 });
 
 router.delete('/remove-cart-product', (req, res) => {
   let queryParams = req.query;
   userHelpers.removeProductFromCart(queryParams.cartId, queryParams.prodId)
-  .then((response) => {
-    console.log("Success response of removing product from cart: ", response);
-    res.json(response);
-  })
-  .catch((err) => {
-    console.log("Error from removing the product from cart: ", err);
-    res.status({status: false});
-  });
+    .then((response) => {
+      console.log("Success response of removing product from cart: ", response);
+      res.json(response);
+    })
+    .catch((err) => {
+      console.log("Error from removing the product from cart: ", err);
+      res.status({ status: false });
+    });
+});
+
+router.get('/place-order', loginMiddleware, async (req, res) => {
+  try {
+    let user = req.session.user;
+    let totalAmount = await userHelpers.getTotalAmount(user._id);
+    console.log("Total amount: ", totalAmount);
+    res.render('users/place_order', { user, totalAmount });
+  } catch (err) {
+    res.render('error', { message: "No items in cart to place order" });
+  }
+});
+
+router.post('/place-order', async (req, res) => {
+  try {
+    let products = await userHelpers.getCartProductsList(req.body.userId);
+    let totalAmount = await userHelpers.getTotalAmount(req.body.userId);
+    userHelpers.placeOrder(req.body, products, totalAmount)
+      .then((response) => {
+        console.log("Response after placing the order: ", response);
+        res.json({ status: true, orderId: response });
+      })
+      .catch((err) => {
+        console.log("Error while placing order: ", err);
+        res.json({ status: false });
+      });
+  } catch (err) {
+    console.log("Error while placing order: ", err);
+    res.json({ status: false, err });
+  }
+});
+
+router.get('/order-success', loginMiddleware, (req, res) => {
+  let user = req.session.user;
+    res.render('users/order_success', { user });
+});
+
+router.get('/view-orders', loginMiddleware, async(req, res) => {
+  try{
+    let user = req.session.user;
+    let orders = await userHelpers.getOrderDetails(user._id);
+    res.render('users/view-orders', { user, orders });
+  }catch(err){
+    console.log("Error while viewing the orders: ", err);
+    res.render('error', {message: err});
+  }
+});
+
+router.get('/view-order-products/:id', loginMiddleware, async (req,res) => {
+  try{
+    let orderId = req.params.id;
+    let user = req.session.user;
+    let orderedProducts = await userHelpers.getOrderedProducts(orderId);
+    res.render('users/view-ordered-products', { user, orderedProducts });
+  }catch(err){
+    console.log("Error while viewing the ordered products: ", err);
+    res.render('error', {message: err});
+  }
 });
 
 module.exports = router;

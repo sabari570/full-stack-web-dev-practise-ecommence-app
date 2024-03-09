@@ -2,36 +2,51 @@
 
 <section class="cart-section">
     {{#if products}}
-    <div class="carts-container">
-        <table class="carts-table">
-            <tr class="carts-table-heading">
-                <th>Item</th>
-                <th>Title</th>
-                <th>Quantity</th>
-                <th class="visibilty-zero-field">Empty</th>
-            </tr>
+        <div class="carts-container">
+            <table class="carts-table">
+                <tr class="carts-table-heading">
+                    <th>Item</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th class="visibilty-zero-field">Empty</th>
+                </tr>
 
-            {{#each products}}
+                {{#each products}}
 
-            <tr class="carts-table-data">
-                <td>
-                    <img class="product-table-image-thumbnail" src="/product-images/{{this.productDetail._id}}.jpeg" alt="">
-                </td>
-                <td>{{this.productDetail.name}}</td>
-                <td>
-                    <button class="carts-quantity-ctrl-btn" onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', -1)">-</button>
-                    <button class="carts-quantity-value" id="{{ this.productDetail._id }}">{{ this.quantity }}</button>
-                    <button class="carts-quantity-ctrl-btn" onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', 1)">+</button>
-                </td>
-                <td>
-                    <button style="border: 1px solid #585555; cursor: pointer" onclick="removeProductFromCart('{{this._id}}', '{{this.productDetail._id}}')" class="delete-btn">Remove</button>
-                </td>
-            </tr>
+                {{!-- If you need to access the user inside a loop then you must call the user in this form: --}}
+                {{!-- <p>User id: {{ ../user._id }}</p> --}}
 
-            {{/each}}
-        </table>
-    </div>
+                <tr class="carts-table-data">
+                    <td>
+                        <img class="product-table-image-thumbnail" src="/product-images/{{this.productDetail._id}}.jpeg"
+                            alt="">
+                    </td>
+                    <td>{{this.productDetail.name}}</td>
+                    <td>Rs. {{ this.productDetail.price }}</td>
+                    <td>
+                        <button class="carts-quantity-ctrl-btn"
+                            onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', -1)">-</button>
+                        <button class="carts-quantity-value" id="{{ this.productDetail._id }}">{{ this.quantity }}</button>
+                        <button class="carts-quantity-ctrl-btn"
+                            onclick="changeProductQuantity('{{this._id}}', '{{this.productDetail._id}}', 1)">+</button>
+                    </td>
+                    <td>
+                        <button style="border: 1px solid #585555; cursor: pointer"
+                            onclick="removeProductFromCart('{{this._id}}', '{{this.productDetail._id}}')"
+                            class="delete-btn">Remove</button>
+                    </td>
+                </tr>
+
+                {{/each}}
+            </table>
+        </div>
+
+        <div class="place-order-container">
+            <h5 class="total-amount-value">TOTAL: Rs. <span id="total-billing-amount">{{ this.totalAmount }}</span>.00</h5>
+            <a href="/place-order" class="add-product-btn">Place Order</a>
+        </div>
     {{else}}
-    <h3>No items in cart</h3>
+        <h3>No items in cart</h3>
     {{/if}}
 </section>

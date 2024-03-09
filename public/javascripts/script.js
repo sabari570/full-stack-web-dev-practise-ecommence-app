@@ -34,6 +34,10 @@ function addToCart(productId) {
             console.log("Response after hitting AJAX request", response);
             if (response.status) {
                 let count = $(".cart-badge").html();
+                if(count == null){
+                    console.log("now refresh the page");
+                    location.reload();
+                }
                 count = parseInt(count) + 1;
                 $('.cart-badge').html(count);
                 alert("Item has been added to cart successfully");
@@ -62,6 +66,7 @@ const changeProductQuantity = (cartId, prodId, count) => {
                 location.reload();  // to reload the page
             } else {
                 document.getElementById(prodId).innerHTML = quantity + count;
+                document.getElementById('total-billing-amount').innerHTML = response.total;
             }
         },
     });
@@ -88,3 +93,22 @@ const removeProductFromCart = (cartId, prodId) => {
         console.log("Removal cancelled by user.");
     }
 };
+
+// Writing ajax for payment checkout and placing the order either by COD or by online payment
+// $("#<id>").submit((e) => {}) => shows grabbing the form by id and taking the submit event and preventing the default submission
+// so that we can call the api instead of the default url
+$("#checkout-form").submit((e) => {
+    e.preventDefault();
+    $.ajax(
+        {
+            url: '/place-order',
+            method: 'post',
+            data: $('#checkout-form').serialize(),  // -> this is how we can get the data of the form in javascript using jQuery
+            success: (response) => {
+                if(response.status){
+                    window.location.href = '/order-success';
+                }
+            }
+        }
+    );
+});

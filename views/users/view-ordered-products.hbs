@@ -1,0 +1,25 @@
+{{>user-header}}
+
+<section class="view-ordered-products-section">
+    <div class="products-container">
+        <div class="products-row">
+
+            {{#each orderedProducts}}
+
+                <div class="column">
+                    <div class="view-ordered-product-card card">
+                        <img class="product-image" src="/product-images/{{ this.productDetail._id }}.jpeg" alt="">
+                        <div class="card-body">
+                            <h5 class="product-title">{{ this.productDetail.name }}</h5>
+                            <p class="product-description">Rs.{{ this.productDetail.price }}</p>
+                            <p class="product-description">Quantity: {{ this.quantity }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            {{/each}}
+
+
+        </div>
+    </div>
+</section>
